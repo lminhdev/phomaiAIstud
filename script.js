@@ -338,8 +338,10 @@ function renderMarkdown(text) {
 function addMessage(role, text, meta="") {
   $("#welcome").style.display = "none";
   const div = document.createElement("div");
-  div.className = `message ${role}`;
-  div.innerHTML = `<div class="bubble">${role==="assistant" ? renderMarkdown(text) : escapeHTML(text)}</div>${meta ? `<small>${escapeHTML(meta)}</small>` : ""}`;
+  // Chuyển role 'assistant' thành 'ai' để ăn khớp với CSS .message.ai
+  const cssRole = role === "assistant" ? "ai" : role;
+  div.className = `message ${cssRole}`;
+  div.innerHTML = `<div class="bubble">${role === "ai" || role === "assistant" ? renderMarkdown(text) : escapeHTML(text)}</div>${meta ? `<small>${escapeHTML(meta)}</small>` : ""}`;
   $("#messages").appendChild(div);
   $("#chat").scrollTop = $("#chat").scrollHeight;
   return div.querySelector(".bubble");
@@ -439,7 +441,7 @@ async function sendMessage(text) {
   $("#input").value = ""; $("#send").disabled = true;
   addMessage("user", text);
   const context = buildContext(text);
-  const assistantBubble = addMessage("assistant", "Đang suy nghĩ…");
+  const assistantBubble = addMessage("ai", "Đang suy nghĩ…");
   setStatus("Đang trả lời...", false, true);
   try {
     const answer = await callAPI(makeMessages(text, context), (delta, full) => {
