@@ -65,7 +65,8 @@ function showToast(text) {
 }
 function setStatus(text, ok=false, busy=false) {
   const el = $("#aiStatus"); if (!el) return;
-  el.innerHTML = `<span class="status-dot" style="background:${ok ? "#42d392" : busy ? "#f3b32e" : "#ff5f6d"}"></span>${escapeHTML(text)}`;
+  // Sửa thẻ <span> thành <i> để khớp với CSS .status i
+  el.innerHTML = `<i style="background:${ok ? "#42d392" : busy ? "#f3b32e" : "#ff5f6d"}"></i>${escapeHTML(text)}`;
 }
 
 function switchPage(name) {
@@ -286,12 +287,19 @@ function renderLibrary() {
   $("#fileCount").textContent = documents.length;
   $("#chunkCount").textContent = documents.reduce((n,d)=>n+(d.chunks?.length||0),0);
   $("#wordCount").textContent = documents.reduce((n,d)=>n+tokens(d.text).length,0).toLocaleString();
+  
+  // Sửa lại cấu trúc HTML của file item để khớp CSS
   $("#files").innerHTML = documents.length ? documents.map(d => `
-    <div class="file-card ${d.id === selectedDocumentId ? "selected" : ""}" data-id="${d.id}">
-      <div class="file-main"><span class="file-icon">${d.name.toLowerCase().endsWith(".pdf") ? "📕" : "📄"}</span>
-      <div><b>${escapeHTML(d.name)}</b><small>${d.chunks?.length||0} chunks • ${(d.size/1024/1024).toFixed(2)} MB</small></div></div>
-      <div class="file-actions"><button data-select="${d.id}">${d.id===selectedDocumentId?"✓ Đang chọn":"Chọn"}</button><button data-delete="${d.id}">🗑</button></div>
+    <div class="file ${d.id === selectedDocumentId ? "selected" : ""}" data-id="${d.id}">
+      <span class="file-icon">${d.name.toLowerCase().endsWith(".pdf") ? "📕" : "📄"}</span>
+      <div class="file-info">
+        <div class="file-name">${escapeHTML(d.name)}</div>
+        <div class="file-meta">${d.chunks?.length||0} chunks • ${(d.size/1024/1024).toFixed(2)} MB</div>
+      </div>
+      <button class="file-btn" data-select="${d.id}">${d.id===selectedDocumentId?"✓ Đang chọn":"Chọn"}</button>
+      <button class="file-btn delete" data-delete="${d.id}">🗑</button>
     </div>`).join("") : `<div class="empty">Chưa có tài liệu.</div>`;
+    
   $$("#files [data-select]").forEach(b => b.addEventListener("click", () => selectDoc(b.dataset.select)));
   $$("#files [data-delete]").forEach(b => b.addEventListener("click", () => deleteDoc(b.dataset.delete)));
   updateActiveDoc();
