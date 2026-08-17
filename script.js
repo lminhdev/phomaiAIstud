@@ -13,7 +13,7 @@ const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 // DÁN GROQ API KEY CỦA BẠN VÀO GIỮA HAI DẤU NGOẶC KÉP.
 // Không commit file này lên repository công khai nếu key thật đang ở đây.
-const GROQ_API_KEY = "PASTE_YOUR_GROQ_API_KEY_HERE";
+const GROQ_API_KEY = "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";
 
 const CONFIG = {
   MAX_FILE_SIZE: 20 * 1024 * 1024,
